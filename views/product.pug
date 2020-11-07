@@ -6,17 +6,101 @@ block vars
 
 block eod
   script
-    +loadModule('pages/product.js')
+    include ../javascripts/pages/product.js    
 
 block content
-  main
-    div Write your content here
-    if error
-      p Ups there is an error, try again
-      p= error
-    else
-      ul
-        li Check console output to see all available properties.
-        li= product.name
-        li= product.price
-        li= product.description
+  if error
+    main(class="container form-container")
+      div(class="form")
+        img(class="error-image" src="https://www.iconpacks.net/icons/1/free-error-icon-1158-thumb.png")
+        p Oops, something went wrong!
+        p= error
+        a(href="/" onclick="window.history.go(-1); return false;" class="btn-primary anchor block") Go Back
+  else
+    main(class="container product-cnt")
+      div(class="product-header")
+        img(src="https://proxycrawl.com/assets/images/logo-header-a5c76faee5.png")
+      div(class="product-container clearfix")
+        div(class="product-images")
+          div(class="main-image")
+            img(id="main-image" src= product.mainImage)
+            ul(class="product-images-list")
+              li
+                img(data-current="true" src=product.mainImage onclick="changeProductMainImage(event)")
+              if product.images.length > 0
+                each val in product.images
+                  li
+                    img(data-current="false" src=val onclick="changeProductMainImage(event)")
+        div(class="product-details")
+          img(class="logo" src="https://proxycrawl.com/assets/images/logo-header-a5c76faee5.png")
+          h1(class="product-title")= product.name
+          a(target="_blank" title= product.byLineInfo.name href= product.byLineInfo.link)= product.byLineInfo.name
+          div(class="customer-reviews")
+            span Customer reviews: 
+              strong= product.customerReview
+            span Ratings: 
+              strong= product.customerReviewCount
+          hr
+          if product.inStock
+            div(class="product-in-stock")
+              div
+                span Price: 
+                span(class="price")= product.price            
+              div
+                span In Stock: 
+                span Yes
+          else
+            div(class="product-out-of-stock")
+              h4 Currently unavailable.
+              p We don't know when or if this item will be back in stock.
+          table(class="product-information")
+            each val in product.productInformation
+              tr
+                td
+                  strong= val.name
+                td= val.value
+      div(class="about-product")
+        h4(class="section-heading") About this item
+        p(class="product-description")= product.description
+        ul
+          each val in product.features
+            li= val
+      div(class="product-reviews")
+        h4(class="section-heading") Customer Reviews
+
+        div(class="stars-rating")
+          div(class="rating-item")
+            span 5 Stars
+            div(class="rating-bar")
+              div(class="filled-rating-bar" style={width: product.productReviewBottom[0]["5star"] })
+            span(class="rating-percent")= product.productReviewBottom[0]["5star"]
+          div(class="rating-item")
+            span 4 Stars
+            div(class="rating-bar")
+              div(class="filled-rating-bar" style={width: product.productReviewBottom[1]["4star"] })
+            span(class="rating-percent")= product.productReviewBottom[1]["4star"]
+          div(class="rating-item")
+            span 3 Stars
+            div(class="rating-bar")
+              div(class="filled-rating-bar" style={width: product.productReviewBottom[2]["3star"] })
+            span(class="rating-percent")= product.productReviewBottom[2]["3star"]
+          div(class="rating-item")
+            span 2 Stars
+            div(class="rating-bar")
+              div(class="filled-rating-bar" style={width: product.productReviewBottom[3]["2star"] })
+            span(class="rating-percent")= product.productReviewBottom[3]["2star"]
+          div(class="rating-item")
+            span 1 Star
+            div(class="rating-bar")
+              div(class="filled-rating-bar" style={width: product.productReviewBottom[4]["1star"] })
+            span(class="rating-percent")= product.productReviewBottom[4]["1star"]
+
+        ul
+          each val in product.reviews
+            li
+              h5
+                span= val.reviewTitle
+              p= val.reviewText
+              span(class="review-rating")
+                em= val.reviewRating
+              a(href= val.reviewerLink target="_blank")= val.reviewerName
